@@ -1,38 +1,44 @@
 import React, { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { connect } from 'react-redux';
+import contactsActions from '../../redux/contacts/contactsActions';
 import s from './ContactForm.module.css';
 
-export function ContactForm ({onSubmit}) {
+export function ContactForm({onSubmit}) {
   
-  const initialContact = {
+  const initialState = {
     name: "",
     number: "",
   };
   
-  const [contact, setContact] = useState (initialContact);
-  const { name, number } = contact;
+  const [state, setstate] = useState(initialState)
+  
+  const nameInputId = uuidv4();
+  const numberInputId = uuidv4();
 
   const handleChange = event => {
     const { name, value } = event.target;
-    setContact((prevState) => ({
+    setstate((prevState) => ({
       ...prevState, [name]: value
     }))
   };
 
-  const nameInputId = uuidv4();
-  const numberInputId = uuidv4();
-
-
   const handleSubmit = e => {
     e.preventDefault()
-    onSubmit(contact)
-    resetContact()
+    const { name, number } = state;
+
+    if (name && number) {
+      const NewContact = { name, number };
+      onSubmit(NewContact)
+      resetContact()
+    }
   }
 
   const resetContact = () => {
-    setContact({ ...initialContact });
+    setstate({ ...initialState });
   }
 
+  const { name, number } = state;
   return (
     <form className={s.contactForm} autoComplete="on" onSubmit={handleSubmit}>
       <label
@@ -73,3 +79,9 @@ export function ContactForm ({onSubmit}) {
     </form>
   )
 }
+
+const mapDispatchToProps = {
+  onSubmit: contactsActions.addContact,
+};
+
+export default connect(null, mapDispatchToProps)(ContactForm);
