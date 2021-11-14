@@ -10,7 +10,7 @@ export function ContactForm({onSubmit}) {
     name: "",
     number: "",
   };
-  
+
   const [state, setstate] = useState(initialState)
   
   const nameInputId = uuidv4();
@@ -28,8 +28,8 @@ export function ContactForm({onSubmit}) {
     const { name, number } = state;
 
     if (name && number) {
-      const NewContact = { name, number };
-      onSubmit(NewContact)
+      const newContact = { name, number };
+      onSubmit(newContact)
       resetContact()
     }
   }

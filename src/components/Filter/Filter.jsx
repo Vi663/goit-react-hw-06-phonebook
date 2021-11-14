@@ -1,10 +1,15 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getFilterValue } from "../../redux/contacts/contacts.Selectors";
 import contactsActions from '../../redux/contacts/contactsActions';
 import s from './Filter.module.css'
 
-const Filter = ({ contacts, filterValue, onFilter }) => {
-
+const Filter = () => {
+  const dispatch = useDispatch();
+  const filterValue = useSelector(getFilterValue);
+  const onChangeHandler = (e) => {
+    dispatch(contactsActions.filterContacts(e.target.value))
+  }
   return (
     <div>
       <p>Find contacts by name</p>
@@ -12,22 +17,22 @@ const Filter = ({ contacts, filterValue, onFilter }) => {
         type="text"
         name="filter"
         value={filterValue}
-        onChange={onFilter}
+        onChange={onChangeHandler}
       />
     </div>
   )
 };
 
-const mapStateToProps = state => {
-  return {
-    contacts: state.contacts.items,
-    filterValue: state.contacts.filter,
-  };
-};
+// const mapStateToProps = state => {
+//   return {
+//     contacts: state.contacts.items,
+//     filterValue: state.contacts.filter,
+//   };
+// };
 
-const mapDispatchToProps = {
-  onFilter: contactsActions.filterContacts,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Filter);
+// const mapDispatchToProps = {
+//   onFilter: contactsActions.filterContacts,
+// };
+export default Filter;
+// export default connect(mapStateToProps, mapDispatchToProps)(Filter);
 

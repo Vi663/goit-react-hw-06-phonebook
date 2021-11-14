@@ -9,10 +9,14 @@ const INITIAL_ITEMS = [
   { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
 ];
 
-const filterContacts = (_, { payload }) => payload;
-const addContact = (state, { payload }) => [payload, ...state];
+const filterContacts = (_state, { payload }) => {
+  return payload
+};
+const addContact = (state, { payload }) => {
+  return [payload, ...state]
+};
 const deleteContact = (state, { payload }) => {
-  return state.filter(contact => contact.id !== payload);
+  return state.contacts.filter(contact => contact.id !== payload);
 };
 
 const itemsReducer = createReducer(INITIAL_ITEMS, {
