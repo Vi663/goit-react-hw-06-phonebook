@@ -1,24 +1,28 @@
 import React, { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { getContacts } from '../../redux/contacts/contactsSelectors';
 import contactsActions from '../../redux/contacts/contactsActions';
+import { v4 as uuidv4 } from 'uuid';
+// import contactsActions from '../../redux/contacts/contactsActions';
 import s from './ContactForm.module.css';
 
-export function ContactForm({onSubmit}) {
+export function ContactForm() {
   
   const initialState = {
     name: "",
     number: "",
   };
 
-  const [state, setstate] = useState(initialState)
+  const [state, setState] = useState(initialState)
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
   
   const nameInputId = uuidv4();
   const numberInputId = uuidv4();
 
   const handleChange = event => {
     const { name, value } = event.target;
-    setstate((prevState) => ({
+    setState((prevState) => ({
       ...prevState, [name]: value
     }))
   };
@@ -26,16 +30,22 @@ export function ContactForm({onSubmit}) {
   const handleSubmit = e => {
     e.preventDefault()
     const { name, number } = state;
+    const isContact = contacts.find(
+      contact => contact.name.toLowerCase() === name.toLowerCase(),
+    );
 
-    if (name && number) {
-      const newContact = { name, number };
-      onSubmit(newContact)
-      resetContact()
+    if (isContact) {
+      resetContact();
+      alert(`${name} is already in contacts`);
+      return;
     }
+
+    dispatch(contactsActions.addContact({ name, number }));
+    resetContact();
   }
 
   const resetContact = () => {
-    setstate({ ...initialState });
+    setState({ ...initialState });
   }
 
   const { name, number } = state;
@@ -69,7 +79,7 @@ export function ContactForm({onSubmit}) {
         id={numberInputId}
         onChange={handleChange}
         pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-        title="Номер телефона должен состоять цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
+        title="Номер телефона должен состоять из цифр и может содержать пробелы, тире, круглые скобки и может начинаться с +"
         required
       />
       <button className={s.contactBtn}
@@ -79,9 +89,3 @@ export function ContactForm({onSubmit}) {
     </form>
   )
 }
-
-const mapDispatchToProps = {
-  onSubmit: contactsActions.addContact,
-};
-
-export default connect(null, mapDispatchToProps)(ContactForm);
